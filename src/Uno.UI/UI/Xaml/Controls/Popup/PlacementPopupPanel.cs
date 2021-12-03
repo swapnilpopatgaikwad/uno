@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
 using Windows.Foundation;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls.Primitives;
 using Uno.UI;
-using Windows.UI.Core;
 using Uno.Extensions;
 using Uno.Foundation.Logging;
 
 
 #if HAS_UNO_WINUI
 using WindowSizeChangedEventArgs = Microsoft.UI.Xaml.WindowSizeChangedEventArgs;
+using XamlWindow = Microsoft.UI.Xaml.Window;
 #else
 using WindowSizeChangedEventArgs = Windows.UI.Core.WindowSizeChangedEventArgs;
+using XamlWindow = Windows.UI.Xaml.Window;
 #endif
 
 namespace Windows.UI.Xaml.Controls.Primitives
@@ -138,6 +140,7 @@ namespace Windows.UI.Xaml.Controls.Primitives
 				return default;
 			}
 
+			var screenSize = XamlWindow.Current.Bounds.Size; // the bounds has no offset.
 			var visibleBounds = ApplicationView.GetForCurrentView().VisibleBounds;
 
 			// Make sure the desiredSize fits in the panel
@@ -191,10 +194,22 @@ namespace Windows.UI.Xaml.Controls.Primitives
 							y: anchorRect.Top + halfAnchorHeight - halfChildHeight);
 						break;
 					case FlyoutBase.MajorPlacementMode.Full:
-						desiredSize = visibleBounds.Size.AtMost(maxSize);
+						// Display the flyout fullscreen over everything, and
+						// correct for VisibleBounds via `toolkit:VisibleBoundsPadding.Mask=All` on the `FlyoutPresenterStyle.Template`.
+						// This way the user has the option to claim notch/nav-pill areas, if desired, by adjusting the `VBP.Mask`.
+						desiredSize = screenSize.AtMost(maxSize);
 						finalPosition = new Point(
-							x: (visibleBounds.Width - desiredSize.Width) / 2.0,
-							y: (visibleBounds.Height - desiredSize.Height) / 2.0);
+							x: FindOptimalOffset(desiredSize.Width, visibleBounds.X, visibleBounds.Width, screenSize.Width),
+							y: FindOptimalOffset(desiredSize.Height, visibleBounds.Y, visibleBounds.Height, screenSize.Height));
+
+						double FindOptimalOffset(double length, double visibleOffset, double visibleLength, double max)
+						{
+							if (length >= max) return 0;
+							// If max-width/height is set, attempt to center within visibleBounds;
+							if (length > visibleLength) return visibleOffset + (visibleLength - length) / 2;
+							// Or, center on the screen
+							return (max - length) / 2;
+						}
 						break;
 					default: // Other unsupported placements
 						finalPosition = new Point(
@@ -203,11 +218,11 @@ namespace Windows.UI.Xaml.Controls.Primitives
 						break;
 				}
 
-				var justification = FlyoutBase.GetJustificationFromPlacementMode(PopupPlacement);
 
 				var fits = true;
 				if (PopupPlacement != FlyoutPlacementMode.Full)
 				{
+					var justification = FlyoutBase.GetJustificationFromPlacementMode(PopupPlacement);
 					if (IsPlacementModeVertical(placement))
 					{
 						var controlXPos = finalPosition.X;
