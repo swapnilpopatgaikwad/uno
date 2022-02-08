@@ -305,6 +305,16 @@ declare namespace Uno.UI {
         *
         */
         setStyleDoubleNative(pParams: number): boolean;
+        setSolidColorBorder(htmlId: number, colorHex: string, width: string): boolean;
+        /**
+        * Set border to solid color brush.
+        */
+        setSolidColorBorderNative(pParams: number): boolean;
+        setGradientBorder(htmlId: number, borderImage: string, width: string): boolean;
+        /**
+        * Set border to gradient brush.
+        */
+        setGradientBorderNative(pParams: number): boolean;
         setArrangeProperties(elementId: number): string;
         /**
             * Remove the CSS style of a html element.
@@ -1469,6 +1479,12 @@ declare class WindowManagerSetElementTransformParams {
     M32: number;
     static unmarshal(pData: number): WindowManagerSetElementTransformParams;
 }
+declare class WindowManagerSetGradientBorderParams {
+    HtmlId: number;
+    BorderImage: string;
+    Width: string;
+    static unmarshal(pData: number): WindowManagerSetGradientBorderParams;
+}
 declare class WindowManagerSetNameParams {
     HtmlId: number;
     Name: string;
@@ -1485,11 +1501,11 @@ declare class WindowManagerSetPropertyParams {
     Pairs: Array<string>;
     static unmarshal(pData: number): WindowManagerSetPropertyParams;
 }
-declare class WindowManagerSetSelectionHighlightParams {
+declare class WindowManagerSetSolidColorBorderParams {
     HtmlId: number;
-    BackgroundColor: number;
-    ForegroundColor: number;
-    static unmarshal(pData: number): WindowManagerSetSelectionHighlightParams;
+    ColorHex: string;
+    Width: string;
+    static unmarshal(pData: number): WindowManagerSetSolidColorBorderParams;
 }
 declare class WindowManagerSetStyleDoubleParams {
     HtmlId: number;
