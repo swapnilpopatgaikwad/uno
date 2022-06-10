@@ -363,42 +363,59 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		[RunsOnUIThread]
 		public async Task When_NestedItemsControl_RecycleTemplate()
 		{
-			var template = (DataTemplate)XamlReader.Load(@"
-				<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>
-					<ItemsControl ItemsSource='{Binding NestedSource}'
-								  BorderBrush='Black' BorderThickness='1'>
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<Rectangle Fill='Red' Height='50' Width='50' />
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-				</DataTemplate>
+			var SUT = (ItemsControl)XamlReader.Load(@"
+				<ItemsControl xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+							  ItemsSource='{Binding Source}' Padding='5'>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<ItemsControl ItemsSource='{Binding NestedSource}'
+										  BorderBrush='Black' BorderThickness='1'>
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<Rectangle Fill='Red' Height='50' Width='50' />
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 			".Replace('\'', '"'));
-			var initialSource = new object[] { new { NestedSource = new object[1] }, };
-			var resetSource = new object[] { new { NestedSource = new object[0] }, };
-			var SUT = new ItemsControl()
-			{
-				ItemsSource = initialSource,
-				ItemTemplate = template,
-			};
+			var vm = new When_NestedItemsControl_RecycleTemplate_VM();
+
 			WindowHelper.WindowContent = SUT;
+			SUT.DataContext = vm;
 
 			var item = default(ContentPresenter);
 
 			// [initial stage]: load the nested ItemsControl with items, so it has an initial height
-			await WindowHelper.WaitForLoaded(SUT);
-			await WindowHelper.WaitFor(() => (item = SUT.ContainerFromItem(initialSource[0]) as ContentPresenter) != null, message: "initial state: failed to find the item");
+			await WindowHelper.WaitForIdle();
+			await WindowHelper.WaitFor(() => (item = SUT.ContainerFromItem(vm.Source[0]) as ContentPresenter) != null, message: "initial state: failed to find the item");
 			Assert.AreEqual(50, item.ActualHeight, delta: 1.0, "initial state: expecting the item to have an starting height of 50");
 
 			// [reset stage]: ItemsSource is reset with empty NestedSource, and we expected the height to be RE-measured
-			SUT.ItemsSource = resetSource;
+			vm.Source = When_NestedItemsControl_RecycleTemplate_VM.Fields1;
 			await WindowHelper.WaitForIdle();
-			await WindowHelper.WaitFor(() => (item = SUT.ContainerFromItem(resetSource[0]) as ContentPresenter) != null, message: "reset state: failed to find the item");
-			Assert.AreEqual(0, item.ActualHeight, "reset state: expecting the item's height to be remeasured to 0");
+			await WindowHelper.WaitFor(() => (item = SUT.ContainerFromItem(vm.Source[0]) as ContentPresenter) != null, message: "reset state: failed to find the item");
+			//Assert.AreEqual(0, item.ActualHeight, "reset state: expecting the item's height to be remeasured to 0");
+
+			var height = item.ActualHeight;
+			await Task.Delay(5000);
+			var height2 = item.ActualHeight;
 		}
 #endif
 
+		private class When_NestedItemsControl_RecycleTemplate_VM : ViewModelBase
+		{
+			public object[] Source { get => GetProperty<object[]>(); set => SetProperty(value); }
+
+			public When_NestedItemsControl_RecycleTemplate_VM()
+			{
+				Source = Fields2;
+			}
+
+			public static object[] Fields1 = new object[] { new { NestedSource = new object[0] } };
+			public static object[] Fields2 = new object[] { new { NestedSource = new object[1] } };
+		}
 	}
 
 	internal partial class ContentControlItemsControl : ItemsControl
