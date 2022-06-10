@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -1020,6 +1020,7 @@ namespace Windows.UI.Xaml.Controls
 					}
 
 					ItemsPanelRoot.Children.Clear();
+					FrameworkElementHelper.SetUseMeasurePathDisabled(ItemsPanelRoot, invalidate: false);
 
 					// Fall-through and materialize the call collection.
 				}

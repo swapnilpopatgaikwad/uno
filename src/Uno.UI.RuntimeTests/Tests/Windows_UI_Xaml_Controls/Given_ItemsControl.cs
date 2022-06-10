@@ -251,11 +251,11 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 		public async Task Check_ItemContainerStyle_TextBlock()
 		{
 			var containerStyle = (Style)XamlReader.Load(
-			   @"<Style xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='TextBlock'> 
+			   @"<Style xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='TextBlock'>
 		                        <Setter Property='Foreground' Value='Green'/>
 		                    </Style>");
 			var itemStyle = (Style)XamlReader.Load(
-			   @"<Style xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='TextBlock'> 
+			   @"<Style xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='TextBlock'>
 		                        <Setter Property='Foreground' Value='Red'/>
 		                    </Style>");
 
@@ -358,8 +358,49 @@ namespace Uno.UI.RuntimeTests.Tests.Windows_UI_Xaml_Controls
 			Assert.AreEqual(third.Style, containerStyle);
 		}
 
+#if __ANDROID__
+		[TestMethod]
+		[RunsOnUIThread]
+		public async Task When_NestedItemsControl_RecycleTemplate()
+		{
+			var template = (DataTemplate)XamlReader.Load(@"
+				<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>
+					<ItemsControl ItemsSource='{Binding NestedSource}'
+								  BorderBrush='Black' BorderThickness='1'>
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<Rectangle Fill='Red' Height='50' Width='50' />
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</DataTemplate>
+			".Replace('\'', '"'));
+			var initialSource = new object[] { new { NestedSource = new object[1] }, };
+			var resetSource = new object[] { new { NestedSource = new object[0] }, };
+			var SUT = new ItemsControl()
+			{
+				ItemsSource = initialSource,
+				ItemTemplate = template,
+			};
+			WindowHelper.WindowContent = SUT;
+
+			var item = default(ContentPresenter);
+
+			// [initial stage]: load the nested ItemsControl with items, so it has an initial height
+			await WindowHelper.WaitForLoaded(SUT);
+			await WindowHelper.WaitFor(() => (item = SUT.ContainerFromItem(initialSource[0]) as ContentPresenter) != null, message: "initial state: failed to find the item");
+			Assert.AreEqual(50, item.ActualHeight, delta: 1.0, "initial state: expecting the item to have an starting height of 50");
+
+			// [reset stage]: ItemsSource is reset with empty NestedSource, and we expected the height to be RE-measured
+			SUT.ItemsSource = resetSource;
+			await WindowHelper.WaitForIdle();
+			await WindowHelper.WaitFor(() => (item = SUT.ContainerFromItem(resetSource[0]) as ContentPresenter) != null, message: "reset state: failed to find the item");
+			Assert.AreEqual(0, item.ActualHeight, "reset state: expecting the item's height to be remeasured to 0");
+		}
+#endif
 
 	}
+
 	internal partial class ContentControlItemsControl : ItemsControl
 	{
 		protected override DependencyObject GetContainerForItemOverride() => new ContentControl();
