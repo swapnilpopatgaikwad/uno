@@ -1,15 +1,15 @@
 # Using the WebAssembly C# Debugger
 
 There are two ways to debug a WebAssembly application:
-- Using Visual Studio 2019 or 2022 integrated debugger (preferred)
+- Using Visual Studio 2022 integrated debugger (preferred)
 - Using the browser's debugger
 
 ## Using Visual Studio
-Here’s what you need to do to debug an Uno application in Visual Studio (2019 16.10+ or 2022 17.1):
+Here’s what you need to do to debug an Uno application in Visual Studio 2022 (17.3):
 
-- Install the latest [Uno Platform Visual Studio templates](https://marketplace.visualstudio.com/items?itemName=nventivecorp.uno-platform-addin)
-- Have Chrome or Edge (Chromium based)
-- In the NuGet Package Manager, update `Uno.Wasm.Bootstrap` and `Uno.Wasm.Bootstrap.DevServer` 3.0.0 or later
+- [Setup your environment](get-started.md).
+- Have Chrome or Edge (Chromium based) installed
+- In the NuGet Package Manager, update `Uno.Wasm.Bootstrap` and `Uno.Wasm.Bootstrap.DevServer` 3.3 or later
 - Ensure that `<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>` is set in your csproj
 - Ensure that in the `Properties/launchSettings.json` file, the following like below each `launchBrowser` line:
     ```json
@@ -32,7 +32,7 @@ You should now be able to set breakpoints or do step by step debugging of your c
 
 To debug your application:
 - Make your WASM project the startup project (right-click **set as startup** in Solution Explorer)
-- In the NuGet Package Manager, update `Uno.Wasm.Bootstrap` and `Uno.Wasm.Bootstrap.DevServer` to 3.0.0 or later
+- In the NuGet Package Manager, update `Uno.Wasm.Bootstrap` and `Uno.Wasm.Bootstrap.DevServer` to 3.3 or later
 - Ensure that `<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>` is set in your csproj
 - In the debugging toolbar:
 
