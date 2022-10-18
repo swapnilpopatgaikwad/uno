@@ -1355,6 +1355,24 @@ namespace Uno.UI.Tests.Windows_UI_Xaml_Markup.XamlReaderTests
 			Assert.AreEqual(t1, b1.Color);
 		}
 
+		[TestMethod]
+		public void When_ThemeResource_In_ControlTemplate()
+		{
+			var s = GetContent(nameof(When_ThemeResource_In_ControlTemplate));
+			var r = Windows.UI.Xaml.Markup.XamlReader.Load(s) as Page;
+
+			r.ForceLoaded();
+
+			var border1 = (Border)r.FindName("border1");
+			var border2 = (Border)r.FindName("border2");
+
+			var c1 = (border1.BorderBrush as SolidColorBrush)?.Color;
+			var c2 = (border2.BorderBrush as SolidColorBrush)?.Color;
+
+			Assert.AreEqual(c1, Windows.UI.Colors.Pink);
+			Assert.AreEqual(c2, Windows.UI.Colors.Yellow);
+		}
+
 		/// <summary>
 		/// XamlReader.Load the xaml and type-check result.
 		/// </summary>
