@@ -31,7 +31,9 @@ namespace Uno.UI.SourceGenerators.Tests
 		[DataRow("ctx", "(global::System.Int32)a.Value", "(global::System.Int32)ctx.a.Value")]
 
 		// Not supported https://github.com/unoplatform/uno/issues/5061
-		// [DataRow("ctx", "MyFunction((global::System.Int32)MyProperty)", "ctx.MyFunction((global::System.Int32)ctx.MyProperty)")]
+		[DataRow("ctx", "MyFunction((global::System.Int32)MyProperty)", "ctx.MyFunction((global::System.Int32)ctx.MyProperty)")]
+		[DataRow("ctx", "MyFunction((global::System.Int32)MyProperty.Inner)", "ctx.MyFunction((global::System.Int32)ctx.MyProperty.Inner)")]
+		[DataRow("ctx", "((MyClass)MyProperty).Test", "((MyClass)ctx.MyProperty).Test")]
 
 		// Main class (without context)
 		[DataRow("", "MyProperty.A", "MyProperty.A")]

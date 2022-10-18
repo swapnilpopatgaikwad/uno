@@ -104,8 +104,13 @@ namespace Uno.UI.SourceGenerators.XamlGenerator.Utils
 				var e = base.VisitMemberAccessExpression(node);
 				var isValidParent = !Helpers.IsInsideMethod(node).result && !Helpers.IsInsideMemberAccessExpression(node).result;
 				var isParentMemberStatic = node.Expression is MemberAccessExpressionSyntax m && _isStaticMember(m.ToFullString());
+				var isParenthesizedExpression = node.Expression is ParenthesizedExpressionSyntax;
 
-				if (e!= null && isValidParent && !_isStaticMember(node.Expression.ToFullString()) && !isParentMemberStatic)
+				if (e!= null
+					&& isValidParent
+					&& !_isStaticMember(node.Expression.ToFullString())
+					&& !isParentMemberStatic
+					&& !isParenthesizedExpression)
 				{
 					var expression = e.ToFullString();
 					var contextBuilder = _isStaticMember(expression) ? "" : ContextBuilder;
@@ -123,9 +128,20 @@ namespace Uno.UI.SourceGenerators.XamlGenerator.Utils
 			public override SyntaxNode? VisitIdentifierName(IdentifierNameSyntax node)
 			{
 				var isInsideCast = Helpers.IsInsideCast(node);
-				var isValidParent = !Helpers.IsInsideMethod(node).result
-					&& !Helpers.IsInsideMemberAccessExpression(node).result
-					&& !isInsideCast.result;
+				var isValidParent =
+					(
+						!Helpers.IsInsideMethod(node).result
+						&& !Helpers.IsInsideMemberAccessExpression(node).result
+						&& !isInsideCast.result
+					)
+					||
+					(
+						Helpers.IsInsideCastWithParentheses(node).result
+					)
+					||
+					(
+						Helpers.IsInsideCastAsArgument(node).result
+					);
 
 				if (isValidParent && !_isStaticMember(node.ToFullString()))
 				{
@@ -249,6 +265,46 @@ namespace Uno.UI.SourceGenerators.XamlGenerator.Utils
 				do
 				{
 					if (currentNode is CastExpressionSyntax cast)
+					{
+						return (true, cast);
+					}
+
+					currentNode = currentNode?.Parent;
+				}
+				while (currentNode != null);
+
+				return (false, null);
+			}
+
+			internal static (bool result, CastExpressionSyntax? expression) IsInsideCastWithParentheses(SyntaxNode node)
+			{
+				var currentNode = node.Parent;
+
+				do
+				{
+					if (currentNode is CastExpressionSyntax cast
+						&& cast.Parent is ParenthesizedExpressionSyntax
+						&& cast.Expression == node)
+					{
+						return (true, cast);
+					}
+
+					currentNode = currentNode?.Parent;
+				}
+				while (currentNode != null);
+
+				return (false, null);
+			}
+
+			internal static (bool result, CastExpressionSyntax? expression) IsInsideCastAsArgument(SyntaxNode node)
+			{
+				var currentNode = node.Parent;
+
+				do
+				{
+					if (currentNode is CastExpressionSyntax cast
+						&& cast.Parent is ArgumentSyntax
+						&& cast.Expression == node)
 					{
 						return (true, cast);
 					}
