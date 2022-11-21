@@ -298,6 +298,7 @@ namespace Windows.UI.Xaml.Controls.Primitives
 			}
 
 			Target = placementTarget;
+			_popup.PlacementTarget = placementTarget;
 
 			if (showOptions != null)
 			{
@@ -339,6 +340,23 @@ namespace Windows.UI.Xaml.Controls.Primitives
 					m_placementOverride = showOptions.Placement;
 				}
 			}
+
+			_popup.DesiredPlacement = _flyout.EffectivePlacement switch
+			{
+				FlyoutPlacementMode.Top => PopupPlacementMode.Top,
+				FlyoutPlacementMode.Bottom => PopupPlacementMode.Bottom,
+				FlyoutPlacementMode.Left => PopupPlacementMode.Bottom,
+				FlyoutPlacementMode.Right => PopupPlacementMode.Bottom,
+				FlyoutPlacementMode.TopEdgeAlignedLeft => PopupPlacementMode.TopEdgeAlignedLeft,
+				FlyoutPlacementMode.TopEdgeAlignedRight => PopupPlacementMode.TopEdgeAlignedRight,
+				FlyoutPlacementMode.BottomEdgeAlignedLeft => PopupPlacementMode.BottomEdgeAlignedLeft,
+				FlyoutPlacementMode.BottomEdgeAlignedRight => PopupPlacementMode.BottomEdgeAlignedRight,
+				FlyoutPlacementMode.LeftEdgeAlignedTop => PopupPlacementMode.LeftEdgeAlignedTop,
+				FlyoutPlacementMode.LeftEdgeAlignedBottom => PopupPlacementMode.LeftEdgeAlignedBottom,
+				FlyoutPlacementMode.RightEdgeAlignedTop => PopupPlacementMode.RightEdgeAlignedTop,
+				FlyoutPlacementMode.RightEdgeAlignedBottom => PopupPlacementMode.RightEdgeAlignedBottom,
+				_ => PopupPlacementMode.Auto,
+			};
 
 			OnOpening();
 			Opening?.Invoke(this, EventArgs.Empty);
