@@ -341,7 +341,7 @@ namespace Windows.UI.Xaml.Controls.Primitives
 				}
 			}
 
-			_popup.DesiredPlacement = _flyout.EffectivePlacement switch
+			_popup.DesiredPlacement = EffectivePlacement switch
 			{
 				FlyoutPlacementMode.Top => PopupPlacementMode.Top,
 				FlyoutPlacementMode.Bottom => PopupPlacementMode.Bottom,
