@@ -10,16 +10,18 @@
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+
+		<UnoSingleLocationProject>true</UnoSingleLocationProject>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="Images\SplashScreen.scale-200.png" />
-		<Content Include="Images\LockScreenLogo.scale-200.png" />
-		<Content Include="Images\Square150x150Logo.scale-200.png" />
-		<Content Include="Images\Square44x44Logo.scale-200.png" />
-		<Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
-		<Content Include="Images\StoreLogo.png" />
-		<Content Include="Images\Wide310x150Logo.scale-200.png" />
+		<Content Include="Platforms\Windows\Images\SplashScreen.scale-200.png" />
+		<Content Include="Platforms\Windows\Images\LockScreenLogo.scale-200.png" />
+		<Content Include="Platforms\Windows\Images\Square150x150Logo.scale-200.png" />
+		<Content Include="Platforms\Windows\Images\Square44x44Logo.scale-200.png" />
+		<Content Include="Platforms\Windows\Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
+		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
+		<Content Include="Platforms\Windows\Images\Wide310x150Logo.scale-200.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -27,8 +29,9 @@
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
 		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
+		<PackageReference Include="Uno.WinUI" Version="4.7.0-dev.417" />
 
-		<Manifest Include="$(ApplicationManifest)" />
+		<Manifest Include="Platforms\Windows\$(ApplicationManifest)" />
 	</ItemGroup>
 
 	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
@@ -51,6 +54,4 @@
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22000.27" />
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22000.27" />
 	</ItemGroup>
-	
-	<Import Project="..\$ext_safeprojectname$.Shared\$ext_safeprojectname$.Shared.projitems" Label="Shared" />
 </Project>
