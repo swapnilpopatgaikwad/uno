@@ -23,7 +23,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="Platforms\Windows\Assets\SplashScreen.png" />
+		<Content Include="Platforms\WebAssembly\Assets\SplashScreen.png" />
 		$if$($UseWebAssemblyManifestJson$ == True)
 		<Content Include="Platforms\WebAssembly\manifest.webmanifest" />
 		<Content Include="Platforms\WebAssembly\Assets\AppIcon-*.png" />
