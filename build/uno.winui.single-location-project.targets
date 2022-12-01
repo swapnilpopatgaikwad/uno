@@ -50,7 +50,7 @@
 	</ItemGroup>
 
 	<!-- Page Default includes -->
-	<ItemGroup Condition=" '$(EnableDefaultItems)' == 'true' and '$(UnoSingleLocationProject)' == 'true' ">
+	<ItemGroup Condition=" '$(EnableDefaultItems)' == 'true' and '$(UnoSingleLocationProject)' == 'true' and '$(WindowsAppSDKWinUI)'!='true' ">
 		<Page Include="**/*.xaml" XamlRuntime="WinUI" Exclude="Platforms/**/*.xaml" />
 		<UnoPage Include="**/*.xaml" XamlRuntime="WinUI" Exclude="Platforms/**/*.xaml" />
 		<ApplicationDefinition Include="App.xaml" XamlRuntime="WinUI" />
@@ -61,7 +61,7 @@
 	</ItemGroup>
 
 	<!-- Page WPF Default includes -->
-	<ItemGroup  Condition=" '$(EnableDefaultItems)' == 'true' and '$(UnoSingleLocationProject)' == 'true' and $(MSBuildProjectName.EndsWith('.Skia.Wpf')) ">
+	<ItemGroup  Condition=" '$(EnableDefaultItems)' == 'true' and '$(UnoSingleLocationProject)' == 'true' and '$(UseWPF)'=='true' ">
 		<Page Include="$(SkiaWpfProjectFolder)/**/*.xaml" XamlRuntime="Wpf" />
 		<ApplicationDefinition Include="$(SkiaWpfProjectFolder)/App.xaml" XamlRuntime="Wpf" />
 	</ItemGroup>
@@ -170,8 +170,11 @@
 		<_UnoPlatformExcludes Include="$(SkiaFramebufferProjectFolder)/**" Condition="'$(UnoIsSkiaLinuxFramebufferHead)'!='true'" />
 		<_UnoPlatformExcludes Include="$(WebAssemblyProjectFolder)/**" Condition="'$(UnoIsWebAssemblyBrowserHead)'!='true'" />
 
-		<None Remove="Platforms/**" />
-		<Content Remove="Platforms/**" />
+		<!-- Remove items that are not applicable to the current platform -->
+		<None Remove="@(_UnoPlatformExcludes)" />
+		<Content Remove="@(_UnoPlatformExcludes)" />
+		<Page Remove="@(_UnoPlatformExcludes)" />
+		<ApplicationDefinition Remove="@(_UnoPlatformExcludes)" />
 
 		<!-- Make files available in the tree -->
 		<None Include="**" Exclude="@(_UnoPlatformExcludes)" />
@@ -188,7 +191,6 @@
 			</PropertyGroup>
 
 			<ItemGroup Condition=" '$(UnoSingleLocationProject)' == 'true' ">
-				<ProjectCapability Include="Msix" />
 				<ProjectCapability Include="MauiSingleLocationProject" />
 				<ProjectCapability Include="LaunchProfiles" />
 				<!-- If VS is older than Dev17 -->
@@ -222,6 +224,11 @@
 				<ProjectCapability Include="WindowsXamlResourceDictionary"/>
 				<ProjectCapability Include="WindowsXamlUserControl"/>
 				<ProjectCapability Include="WindowsUniversalMultiViews"/>
+			</ItemGroup>
+		</When>
+		<When Condition="'$(WindowsAppSDKWinUI)'=='true'">
+			<ItemGroup>
+				<ProjectCapability Include="Msix" Condition="'$(EnableMsixTooling)'=='true'" />
 			</ItemGroup>
 		</When>
 	</Choose>
