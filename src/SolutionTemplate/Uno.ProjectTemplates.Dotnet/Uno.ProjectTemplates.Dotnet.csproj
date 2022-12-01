@@ -425,7 +425,7 @@
 			<Using Namespace="System.IO" />
 			<Code Type="Fragment" Language="cs">
 				<![CDATA[
-					string[] filters = new[] { "*.cs", "*.xml", "*.xaml", "*.plist", "*.js", "*.json", "*.config", "*.appxmanifest", "*.projitems", "*.shproj", "*.csproj", "*.sln", "*.props" };
+					string[] filters = new[] { "*.cs", "*.xml", "*.xaml", "*.plist", "*.js", "*.json", "*.config", "*.appxmanifest", "*.projitems", "*.shproj", "*.csproj", "*.sln", "*.props", "*.resw" };
 
 					foreach (var file in filters.SelectMany(f => Directory.EnumerateFiles(SourcePath, f, SearchOption.AllDirectories)))
 					{
