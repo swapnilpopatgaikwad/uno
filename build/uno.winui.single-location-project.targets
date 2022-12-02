@@ -51,10 +51,10 @@
 
 	<!-- Page Default includes -->
 	<ItemGroup Condition=" '$(EnableDefaultItems)' == 'true' and '$(UnoSingleLocationProject)' == 'true' and '$(WindowsAppSDKWinUI)'!='true' ">
-		<Page Include="**/*.xaml" XamlRuntime="WinUI" Exclude="Platforms/**/*.xaml" />
-		<UnoPage Include="**/*.xaml" XamlRuntime="WinUI" Exclude="Platforms/**/*.xaml" />
-		<ApplicationDefinition Include="App.xaml" XamlRuntime="WinUI" />
-		<UnoApplicationDefinition Include="App.xaml" XamlRuntime="WinUI" />
+		<Page Include="**/*.xaml" XamlRuntime="WinUI" Exclude="Platforms/**/*.xaml;$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+		<UnoPage Include="**/*.xaml" XamlRuntime="WinUI" Exclude="Platforms/**/*.xaml;$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+		<ApplicationDefinition Include="App.xaml" XamlRuntime="WinUI" Condition="Exists('App.xaml')" />
+		<UnoApplicationDefinition Include="App.xaml" XamlRuntime="WinUI" Condition="Exists('App.xaml')" />
 
 		<!-- Automatically include content assets -->
 		<Content Condition="'$(EnableDefaultContentItems)'=='true'" Include="Assets\**" />
