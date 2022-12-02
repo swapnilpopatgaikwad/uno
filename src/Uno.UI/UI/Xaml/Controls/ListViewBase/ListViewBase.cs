@@ -679,6 +679,13 @@ namespace Windows.UI.Xaml.Controls
 			_containersForIndexRepair.Clear();
 		}
 
+		protected override void OnItemsSourceChanged(DependencyPropertyChangedEventArgs e)
+		{
+			base.OnItemsSourceChanged(e);
+
+			InitializeDataSourceSelectionInfo();
+		}
+
 		internal override void OnItemsSourceGroupsChanged(object sender, NotifyCollectionChangedEventArgs args)
 		{
 			if (RefreshOnCollectionChanged)
@@ -943,7 +950,6 @@ namespace Windows.UI.Xaml.Controls
 
 		private bool SourceHasMoreItems => (GetItems() is ISupportIncrementalLoading incrementalSource && incrementalSource.HasMoreItems) ||
 			(GetItems() is ICollectionView collectionView && collectionView.HasMoreItems);
-
 
 		private void TryLoadMoreItemsInner(int count)
 		{
