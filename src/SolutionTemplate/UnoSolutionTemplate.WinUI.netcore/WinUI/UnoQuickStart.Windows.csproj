@@ -17,13 +17,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="Platforms\Windows\Images\SplashScreen.scale-200.png" />
-		<Content Include="Platforms\Windows\Images\LockScreenLogo.scale-200.png" />
-		<Content Include="Platforms\Windows\Images\Square150x150Logo.scale-200.png" />
-		<Content Include="Platforms\Windows\Images\Square44x44Logo.scale-200.png" />
-		<Content Include="Platforms\Windows\Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
-		<Content Include="Platforms\Windows\Images\StoreLogo.png" />
-		<Content Include="Platforms\Windows\Images\Wide310x150Logo.scale-200.png" />
+		<Content Include="Platforms\Windows\Images\**" />
 	</ItemGroup>
 
 	<ItemGroup>
