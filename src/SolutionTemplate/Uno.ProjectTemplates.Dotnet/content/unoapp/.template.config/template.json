@@ -258,31 +258,40 @@
 				{
 					"condition": "(!mobile)",
 					"exclude": [
-						"UnoWinUIQuickStart.Mobile/**/*"
+						"UnoWinUIQuickStart.App/Platforms/Android/**",
+						"UnoWinUIQuickStart.App/Platforms/iOS/**",
+						"UnoWinUIQuickStart.App/Platforms/MacCatalyst/**",
+						"UnoWinUIQuickStart.App/Platforms/macOS/**",
+						"UnoWinUIQuickStart.App/UnoWinUIQuickStart.Mobile.csproj"
 					]
 				},
 				{
 					"condition": "(!WebAssembly)",
 					"exclude": [
-						"UnoWinUIQuickStart.Gtk/**/*"
+						"UnoWinUIQuickStart.Server/**",
+						"UnoWinUIQuickStart.App/Platforms/WebAssembly/**",
+						"UnoWinUIQuickStart.App/UnoWinUIQuickStart.Mobile.csproj"
 					]
 				},
 				{
 					"condition": "(!skia-gtk)",
 					"exclude": [
-						"UnoWinUIQuickStart.Skia.Gtk/**/*"
+						"UnoWinUIQuickStart.App/Platforms/Skia.Gtk/**",
+						"UnoWinUIQuickStart.App/UnoWinUIQuickStart.Skia.Gtk.csproj"
 					]
 				},
 				{
 					"condition": "(!skia-wpf)",
 					"exclude": [
-						"UnoWinUIQuickStart.Skia.WPF/**/*"
+						"UnoWinUIQuickStart/Platforms/Skia.WPF/**",
+						"UnoWinUIQuickStart.App/UnoWinUIQuickStart.Skia.WPF.csproj"
 					]
 				},
 				{
 					"condition": "(!skia-linux-fb)",
 					"exclude": [
-						"UnoWinUIQuickStart.Skia.Linux.FrameBuffer/**/*"
+						"UnoWinUIQuickStart/Platforms/Skia.Linux.FrameBuffer/**",
+						"UnoWinUIQuickStart.App/UnoWinUIQuickStart.Skia.Linux.FrameBuffer.csproj"
 					]
 				},
 				{
