@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<!-- Props -->
 	<!-- Android -->
 	<ItemGroup Condition=" '$(EnableDefaultItems)' == 'true' and '$(UnoSingleLocationProject)' == 'true' and '$(TargetPlatformIdentifier)' == 'android' and '$(MonoAndroidResourcePrefix)' != '' ">
 		<AndroidResource Include="$(MonoAndroidResourcePrefix)/*/*.xml" />
@@ -55,6 +54,11 @@
 		<UnoPage Include="**/*.xaml" XamlRuntime="WinUI" Exclude="Platforms/**/*.xaml;$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
 		<ApplicationDefinition Include="App.xaml" XamlRuntime="WinUI" Condition="Exists('App.xaml')" />
 		<UnoApplicationDefinition Include="App.xaml" XamlRuntime="WinUI" Condition="Exists('App.xaml')" />
+
+		<PRIResource Include="**/*.resw" XamlRuntime="WinUI" Exclude="Platforms/**/*.resw;$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+
+		<!-- Force VS to refresh caches based on additional non C# content -->
+		<UpToDateCheckInput Include="@(UnoPage);@(ApplicationDefinition);@(PRIResource)" />
 
 		<!-- Automatically include content assets -->
 		<Content Condition="'$(EnableDefaultContentItems)'=='true'" Include="Assets\**" />
@@ -135,6 +139,14 @@
 		<AppDesignerFolder Condition="'$(AppDesignerFolder)'=='' or '$(AppDesignerFolder)'=='Properties'">Platforms\$(UnoPlatformProjectFolder)\Properties</AppDesignerFolder>
 
 		<EnableDefaultContentItems Condition="'$(EnableDefaultContentItems)'==''">true</EnableDefaultContentItems>
+
+		<!-- Flag mobile targets to show all mobile related file in mobile targets -->
+		<_UnoIsMobileProject Condition="
+			'$(TargetPlatformIdentifier)' == 'android'
+			or '$(TargetPlatformIdentifier)' == 'ios'
+			or '$(TargetPlatformIdentifier)' == 'maccatalyst'
+			or '$(TargetPlatformIdentifier)' == 'macos'
+			">true</_UnoIsMobileProject>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(UseWPF)'=='true' ">
@@ -164,7 +176,6 @@
 		<_UnoPlatformExcludes Include="$(MacCatalystProjectFolder)/**" Condition="'$(TargetPlatformIdentifier)' != 'maccatalyst'" />
 		<_UnoPlatformExcludes Include="$(MacOSProjectFolder)/**" Condition="'$(TargetPlatformIdentifier)' != 'macos'" />
 		<_UnoPlatformExcludes Include="$(WindowsProjectFolder)/**" Condition="'$(WindowsAppSDKWinUI)'!='true'" />
-
 		<_UnoPlatformExcludes Include="$(SkiaGtkProjectFolder)/**" Condition="'$(UnoIsSkiaGtkHead)'!='true'" />
 		<_UnoPlatformExcludes Include="$(SkiaWpfProjectFolder)/**" Condition="'$(UseWPF)'!='true'" />
 		<_UnoPlatformExcludes Include="$(SkiaFramebufferProjectFolder)/**" Condition="'$(UnoIsSkiaLinuxFramebufferHead)'!='true'" />
@@ -176,8 +187,17 @@
 		<Page Remove="@(_UnoPlatformExcludes)" />
 		<ApplicationDefinition Remove="@(_UnoPlatformExcludes)" />
 
+	</ItemGroup>
+
+	<!-- Files visiblity for the mobile project -->
+	<ItemGroup>
+		<_UnoPlatformMobileIncludes Include="$(AndroidProjectFolder)/**" Condition="'$(_UnoIsMobileProject)'=='true'" />
+		<_UnoPlatformMobileIncludes Include="$(iOSProjectFolder)/**" Condition="'$(_UnoIsMobileProject)'=='true'" />
+		<_UnoPlatformMobileIncludes Include="$(MacCatalystProjectFolder)/**" Condition="'$(_UnoIsMobileProject)'=='true'" />
+		<_UnoPlatformMobileIncludes Include="$(MacOSProjectFolder)/**" Condition="'$(_UnoIsMobileProject)'=='true'" />
+
 		<!-- Make files available in the tree -->
-		<None Include="**" Exclude="@(_UnoPlatformExcludes)" />
+		<None Include="@(_UnoPlatformMobileIncludes)" />
 	</ItemGroup>
 
 	<Choose>
